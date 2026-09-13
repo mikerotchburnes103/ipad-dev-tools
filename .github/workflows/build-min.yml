@@ -1,0 +1,43 @@
+name: Build minified bookmarklet
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ipad-devtools-source.js
+      - .github/workflows/build-min.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-minified:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Minify source
+        run: |
+          npx --yes terser@5 ipad-devtools-source.js \
+            --compress \
+            --mangle \
+            --format comments=false \
+            --output ipad-devtools-min.js
+
+      - name: Commit regenerated file
+        run: |
+          if git diff --quiet -- ipad-devtools-min.js; then
+            echo "ipad-devtools-min.js is already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ipad-devtools-min.js
+          git commit -m "build: regenerate minified bookmarklet [skip ci]"
+          git push
