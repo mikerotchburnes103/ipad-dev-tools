@@ -78,7 +78,7 @@ The runner applies declared-grant filtering. It also provides a narrow compatibi
 
 ## Installation on iPad Safari
 
-1. Download or open [`ipad-devtools-bookmarklet.txt`](ipad-devtools-bookmarklet.txt).
+1. Download or open [`ipad-dev-tools-loader-bookmarklet.txt`](ipad-dev-tools-loader-bookmarklet.txt).
 2. Copy the complete single-line value, including the `javascript:` prefix.
 3. In Safari on iPad, create any temporary bookmark.
 4. Open Safari's bookmarks, edit that bookmark, and replace its URL with the copied bookmarklet text.
