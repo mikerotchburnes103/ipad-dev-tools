@@ -1,10 +1,12 @@
 # iPad DevTools Bookmarklet
 
-A self-contained, iPad/Safari-friendly developer-tools panel that runs as a bookmarklet on the current web page.
+A compact, iPad/Safari-friendly developer-tools panel that runs as a bookmarklet on the current web page.
 
-It provides a practical subset of browser DevTools without requiring an App Store extension, Safari Web Extension, server, CDN, or build step at runtime.
+The normal installation uses a short loader bookmarklet. The loader downloads the generated implementation from jsDelivr, so source updates can be published without replacing the bookmarklet saved in Safari.
 
-> This is a bookmarklet, not a full browser extension. Safari page, popup, Content Security Policy, CORS, storage, and device-management restrictions still apply.
+It provides a practical subset of browser DevTools without requiring an App Store extension, Safari Web Extension, or private backend.
+
+> This is a bookmarklet, not a full browser extension. Safari page, popup, Content Security Policy, CORS, storage, CDN, and device-management restrictions still apply.
 
 ## Features
 
@@ -85,34 +87,45 @@ The runner applies declared-grant filtering. It also provides a narrow compatibi
 5. Save the bookmark.
 6. Open the page you want to inspect and tap the bookmarklet bookmark.
 
+The loader downloads [`ipad-devtools-min.js`](ipad-devtools-min.js) from the configured jsDelivr URL. After the bookmark is installed, ordinary source updates do not require you to replace the bookmarklet code; the generated implementation is rebuilt and published by the repository workflow.
+
 The panel appears at the bottom of the page. Use the drag handle to resize it. The **Collapse** button leaves a small bottom bar, and **Close** removes the panel for the current page.
 
-If Safari strips the `javascript:` prefix while editing the bookmark, restore the prefix before saving. The bookmarklet must remain one line.
+If Safari strips the `javascript:` prefix while editing the bookmark, restore the prefix before saving. The loader bookmarklet must remain one line.
 
 ## Repository files
 
 | File | Purpose |
 | --- | --- |
-| `ipad-devtools-source.js` | Readable development source. |
-| `ipad-devtools-min.js` | Minified JavaScript artifact. |
-| `ipad-dev-tools-loader-bookmarklet.txt` | Comopact `javascript:` bookmarklet for Safari. |
-| `tampermonkey-compatibility-evaluation.md` | Detailed compatibility evaluation and known limitations. |
-| `userscript-compatibility-report.md` | Userscript API and regression notes. |
+| [`ipad-devtools-source.js`](ipad-devtools-source.js) | Readable development source. Edit this file when changing the implementation. |
+| [`ipad-devtools-min.js`](ipad-devtools-min.js) | Generated minified implementation loaded by the loader bookmarklet. |
+| [`ipad-dev-tools-loader-bookmarklet.txt`](ipad-dev-tools-loader-bookmarklet.txt) | Compact `javascript:` loader bookmarklet for Safari. This normally stays unchanged while the source is updated. |
+| [`build-min.yml`](.github/workflows/build-min.yml) | GitHub Actions workflow that rebuilds the generated minified implementation. |
+| [`tampermonkey-compatibility-evaluation.md`](tampermonkey-compatibility-evaluation.md) | Detailed compatibility evaluation and known limitations. |
+| [`userscript-compatibility-report.md`](userscript-compatibility-report.md) | Userscript API and regression notes. |
 
-For normal iPad use, install the `.txt` bookmarklet artifact. The source file is intended for review and development.
+For normal iPad use, install the linked loader bookmarklet. The readable source and generated implementation are provided for review, maintenance, and automated publishing.
 
-## Development
+## Development and updates
 
-The implementation is intentionally self-contained. The source uses vanilla JavaScript, DOM APIs, Shadow DOM, browser storage, and page-side browser APIs. There is no runtime dependency on a framework or external stylesheet.
+The implementation uses vanilla JavaScript, DOM APIs, Shadow DOM, browser storage, and page-side browser APIs. It has no runtime dependency on a framework or external stylesheet.
 
-When changing the source:
+When changing the implementation:
 
-1. Edit `ipad-devtools-source.js`.
-2. Run a JavaScript syntax check.
-3. Rebuild `ipad-devtools-min.js`.
-4. Rebuild `ipad-devtools-bookmarklet.txt` from the minified artifact.
-5. Validate both the readable source and packed bookmarklet in a browser or DOM test harness.
-6. Commit all three artifacts together so the hosted bookmarklet does not lag behind the source.
+1. Edit [`ipad-devtools-source.js`](ipad-devtools-source.js).
+2. Run a JavaScript syntax check locally if desired:
+
+   ```bash
+   node --check ipad-devtools-source.js
+   ```
+
+3. Commit and push the source change.
+4. Let [`build-min.yml`](.github/workflows/build-min.yml) rebuild [`ipad-devtools-min.js`](ipad-devtools-min.js). Do not manually rebuild the minified artifact for normal source changes.
+5. Test the installed loader bookmarklet on the target iPad/Safari version.
+
+The loader bookmarklet only needs to be changed when the CDN location, repository path, branch, or release tag changes. If the loader continues to point at `@main`, pushing a source change and allowing the workflow to update the generated implementation is sufficient.
+
+For stable releases, point the loader at a version tag instead of `@main`. This prevents an existing Safari bookmark from changing unexpectedly when new code is pushed.
 
 A bookmarklet cannot reproduce extension-only capabilities. Test changes on the target iPad/Safari version, especially for:
 
@@ -141,8 +154,9 @@ This project deliberately does not claim full Tampermonkey or Safari Web Extensi
 
 The bookmarklet executes with access to the current page. Only install userscripts and run code that you trust. A userscript can modify the page and may be able to read data exposed to page JavaScript.
 
-The tool does not require a remote backend. It stores its own settings and saved data in the current site's browser storage. Network capture records requests observed by the page-side hooks; use the Storage and Settings controls to clear saved data when required.
+The tool does not require a private remote backend. The loader does fetch the generated implementation from the configured public CDN URL. It stores its own settings and saved data in the current site's browser storage. Network capture records requests observed by the page-side hooks; use the Storage and Settings controls to clear saved data when required.
 
 ## License
 
 Add the project's chosen license before publishing the repository. Until a license is added, GitHub users should treat the source as available for viewing but not automatically licensed for redistribution or modification.
+  
