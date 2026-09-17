@@ -156,7 +156,8 @@ The bookmarklet executes with access to the current page. Only install userscrip
 
 The tool does not require a private remote backend. The loader does fetch the generated implementation from the configured public CDN URL. It stores its own settings and saved data in the current site's browser storage. Network capture records requests observed by the page-side hooks; use the Storage and Settings controls to clear saved data when required.
 
+Markdown
+
 ## License
 
-Add the project's chosen license before publishing the repository. Until a license is added, GitHub users should treat the source as available for viewing but not automatically licensed for redistribution or modification.
-  
+This project is licensed under the GNU General Public License v2.0. See the [LICENSE](LICENSE) file for the complete license text.
