@@ -95,7 +95,7 @@ If Safari strips the `javascript:` prefix while editing the bookmark, restore th
 | --- | --- |
 | `ipad-devtools-source.js` | Readable development source. |
 | `ipad-devtools-min.js` | Minified JavaScript artifact. |
-| `ipad-devtools-bookmarklet.txt` | Packed, minified `javascript:` bookmarklet for Safari. |
+| `ipad-dev-tools-loader-bookmarklet.txt` | Comopact `javascript:` bookmarklet for Safari. |
 | `tampermonkey-compatibility-evaluation.md` | Detailed compatibility evaluation and known limitations. |
 | `userscript-compatibility-report.md` | Userscript API and regression notes. |
 
